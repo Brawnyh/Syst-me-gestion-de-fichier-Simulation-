@@ -33,6 +33,7 @@ struct sInode
  */
 tInode CreerInode(int numInode, natureFichier type) {
   // A COMPLETER
+  
 }
 
 /* V1

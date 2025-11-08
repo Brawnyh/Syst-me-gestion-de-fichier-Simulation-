@@ -6,6 +6,8 @@
  **/
 
 #include "bloc.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 /* V1
  * Crée et retourne un nouveau bloc de données.
@@ -14,6 +16,14 @@
  */
 tBloc CreerBloc (void) {
   // A COMPLETER
+  tBloc Bloc;
+  Bloc = (tBloc) malloc(TAILLE_BLOC * sizeof(unsigned char));
+  if (Bloc == NULL){
+    fprintf(stderr,"CreerBloc : probleme creation\n");
+    return NULL;
+  }
+  return Bloc;
+
 }
 
 /* V1
@@ -23,6 +33,11 @@ tBloc CreerBloc (void) {
  */
 void DetruireBloc(tBloc *pBloc) {
   // A COMPLETER
+  if (*pBloc != NULL && pBloc!=NULL){
+    free(*pBloc);
+    pBloc=NULL;
+  }
+  
 }
 
 /* V1
@@ -33,6 +48,10 @@ void DetruireBloc(tBloc *pBloc) {
  */
 long EcrireContenuBloc (tBloc bloc, unsigned char *contenu, long taille) {
   // A COMPLETER
+  int i;
+  for (i=0;i<taille;i++){
+    if (bloc[i])
+  }
 }
 
 /* V1
