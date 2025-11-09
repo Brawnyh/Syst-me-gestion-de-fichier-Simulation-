@@ -46,7 +46,7 @@ tInode CreerInode(int numInode, natureFichier type) {
     Inode->blocDonnees[i] = NULL;
   }
   //on initialise le temps
-  Inode ->dateDerAcces=0;
+  Inode->dateDerAcces=0;
   Inode->dateDerModif=0;
   Inode->dateDerModifInode=0;
   return Inode;
@@ -69,6 +69,7 @@ void DetruireInode(tInode *pInode) {
  */
 time_t DateDerAcces(tInode inode) {
   // A COMPLETER
+  return inode->dateDerAcces;
 }
 
 /* V1
@@ -78,6 +79,7 @@ time_t DateDerAcces(tInode inode) {
  */
 time_t DateDerModif(tInode inode) {
   // A COMPLETER
+  return inode->dateDerModif;
 }
 
 /* V1
@@ -87,6 +89,7 @@ time_t DateDerModif(tInode inode) {
  */
 time_t DateDerModifFichier(tInode inode) {
   // A COMPLETER
+  return DateDerModifFichier;
 }
 
 /* V1
@@ -96,6 +99,7 @@ time_t DateDerModifFichier(tInode inode) {
  */
 unsigned int Numero(tInode inode) {
   // A COMPLETER
+  return inode->numero;
 }
 
 /* V1
@@ -105,6 +109,7 @@ unsigned int Numero(tInode inode) {
  */
 long Taille(tInode inode) {
   // A COMPLETER
+  return inode->taille;
 }
 
 /* V1
@@ -114,6 +119,7 @@ long Taille(tInode inode) {
  */
 natureFichier Type(tInode inode) {
   // A COMPLETER
+  return inode->taille;
 }
 
 /* V1
@@ -123,6 +129,7 @@ natureFichier Type(tInode inode) {
  */
 void AfficherInode(tInode inode) {
   // A COMPLETER
+  
 }
 
 /* V1
