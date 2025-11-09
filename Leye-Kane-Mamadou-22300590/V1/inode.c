@@ -129,7 +129,14 @@ natureFichier Type(tInode inode) {
  */
 void AfficherInode(tInode inode) {
   // A COMPLETER
-  
+  printf("=========Inode=========[%d]\n",numero(inode));
+  printf("type: %d \n",type(inode));
+  printf("taille: %d Octets\n",Taille(inode));
+  printf("date dernier accès : %d\n",DateDerAcces(inode));
+  printf("date dernière modification : %d\n", DateDerModif(inode));
+  printf("date dernière modification inode : %d\n",DateDerModifFichier(inode));
+  printf("Données:\n");
+  //printf("%d",); lecture des données 
 }
 
 /* V1

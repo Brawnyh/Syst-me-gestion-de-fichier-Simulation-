@@ -1,0 +1,2 @@
+->Inclusion de la librairie STDLIB dans bloc.c pr utiliser des mallocs
+
