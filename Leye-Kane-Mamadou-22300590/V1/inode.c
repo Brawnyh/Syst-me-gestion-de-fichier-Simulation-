@@ -33,7 +33,24 @@ struct sInode
  */
 tInode CreerInode(int numInode, natureFichier type) {
   // A COMPLETER
-  
+  tInode Inode; 
+  Inode=(tInode) malloc(sizeof(struct sInode));
+  if (Inode==NULL){
+    fprinf(stderr,"CreerInode:Probléme de creation\n");
+    return NULL;
+  }
+  Inode ->numero=numInode; //equivaut à (*Inode).numero=numInode
+  Inode ->type = type;
+  Inode ->taille=0;
+  for (int i = 0; i < NB_BLOCS_DIRECTS; i++) {
+    Inode->blocDonnees[i] = NULL;
+  }
+  //on initialise le temps
+  Inode ->dateDerAcces=0;
+  Inode->dateDerModif=0;
+  Inode->dateDerModifInode=0;
+  return Inode;
+
 }
 
 /* V1
