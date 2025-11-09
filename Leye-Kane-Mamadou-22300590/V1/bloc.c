@@ -49,9 +49,18 @@ void DetruireBloc(tBloc *pBloc) {
 long EcrireContenuBloc (tBloc bloc, unsigned char *contenu, long taille) {
   // A COMPLETER
   int i;
-  for (i=0;i<taille;i++){
-    if (bloc[i])
+  int nbOctets;
+  if (taille <= TAILLE_BLOC){
+    nbOctets = taille;
+  }else{
+    nbOctets = TAILLE_BLOC;
   }
+  for (i=0;i<nbOctets;i++){
+    bloc[i]=contenu[i];
+    }
+
+  return nbOctets;
+  
 }
 
 /* V1
@@ -62,4 +71,16 @@ long EcrireContenuBloc (tBloc bloc, unsigned char *contenu, long taille) {
  */
 long LireContenuBloc(tBloc bloc, unsigned char *contenu, long taille) {
   // A COMPLETER
+  int i;
+  int nbOctets;
+  if (taille <= TAILLE_BLOC){
+    nbOctets = taille;
+  }else{
+    nbOctets = TAILLE_BLOC;
+  }
+  for (i=0;i<nbOctets;i++){
+    contenu[i]=bloc[i];
+  }
+
+  return nbOctets;
 }
