@@ -119,7 +119,7 @@ long Taille(tInode inode) {
  */
 natureFichier Type(tInode inode) {
   // A COMPLETER
-  return inode->taille;
+  return inode->type;
 }
 
 /* V1
