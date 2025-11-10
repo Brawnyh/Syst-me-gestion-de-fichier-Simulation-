@@ -2,8 +2,8 @@ CC=gcc
 CFLAGS=-Wall -Wpedantic -std=c11 -Wextra -g -Wextra
 RM=rm -f
 DEPS= bloc.h inode.h 
-OBJ= bloc.o inode.o gerer_sfv1.o
-EXE=gerer_sfv1
+OBJ= bloc.o inode.o gerer_sf_v1.o
+EXE=gerer_sf_v1
 
 
 # Regenerer l'executable d'apres les dependances *.o 
@@ -11,8 +11,8 @@ $(EXE):  $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o $(EXE)
 
 # Regenerer les .o quand les .h ou .c changent
-gerer_sfv1.o : gerer_sfv1.c bloc.h inode.h
-	$(CC) $(CFLAGS) -c gerer_sfv1.c 
+gerer_sf_v1.o : gerer_sf_v1.c bloc.h inode.h
+	$(CC) $(CFLAGS) -c gerer_sf_v1.c 
 
 bloc.o : bloc.c bloc.h
 	$(CC) $(CFLAGS) -c bloc.c 

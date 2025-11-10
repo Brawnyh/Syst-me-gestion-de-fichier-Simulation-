@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "bloc.c"
-#include "inode.c" //tiene que ser el .h
+#include "bloc.h"
+#include "inode.h"//tiene que ser el .h
 
 int main(void){
     tInode inode;

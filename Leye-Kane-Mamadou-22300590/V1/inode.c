@@ -6,7 +6,7 @@
  **/
 #include "inode.h"
 #include "bloc.h"
-
+#include <stdlib.h>
 // Nombre maximal de blocs dans un inode
 #define NB_BLOCS_DIRECTS 10
 
