@@ -36,7 +36,7 @@ tInode CreerInode(int numInode, natureFichier type) {
   tInode Inode; 
   Inode=(tInode) malloc(sizeof(struct sInode));
   if (Inode==NULL){
-    fprinf(stderr,"CreerInode:Probléme de creation\n");
+    fprintf(stderr,"CreerInode:Probléme de creation\n");
     return NULL;
   }
   Inode ->numero=numInode; //equivaut à (*Inode).numero=numInode
@@ -89,7 +89,7 @@ time_t DateDerModif(tInode inode) {
  */
 time_t DateDerModifFichier(tInode inode) {
   // A COMPLETER
-  return DateDerModifFichier;
+  return inode->dateDerModifInode;
 }
 
 /* V1
@@ -129,7 +129,7 @@ natureFichier Type(tInode inode) {
  */
 void AfficherInode(tInode inode) {
   // A COMPLETER
-  
+
   //printf("%d",); lecture des données 
 }
 
@@ -151,4 +151,5 @@ long LireDonneesInode1bloc(tInode inode, unsigned char *contenu, long taille) {
  */
 long EcrireDonneesInode1bloc(tInode inode, unsigned char *contenu, long taille) {
   // A COMPLETER
+  
 }

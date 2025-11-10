@@ -48,6 +48,7 @@ void DetruireBloc(tBloc *pBloc) {
  */
 long EcrireContenuBloc (tBloc bloc, unsigned char *contenu, long taille) {
   // A COMPLETER
+
   int i;
   int nbOctets;
   if (taille <= TAILLE_BLOC){
