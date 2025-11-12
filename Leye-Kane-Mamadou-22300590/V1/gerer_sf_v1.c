@@ -2,32 +2,75 @@
 #include "bloc.h"
 #include "inode.h"//tiene que ser el .h
 
+
 int main(void){
     tInode inode;
     tBloc bloc;
-    unsigned char c;
-    //int x;
+    unsigned char texte[TAILLE_BLOC];
+    unsigned char lecture[TAILLE_BLOC];
+    char c;
+    int taille = 0;
 
     printf("---Test bloc---\n");
-    printf("Introduit le contenu du bloc:");
-    scanf("%c",&c);
-    bloc=CreerBloc();
-    EcrireContenuBloc(bloc,&c,1);
-    LireContenuBloc(bloc,&c,1);
+    printf("Introduit le contenu du bloc: ");
 
-    //tbloc compile,sanitizers a tester et make a configurer
+    while (taille < TAILLE_BLOC - 1) {
+        scanf("%c", &c);
+        if (c == '\n') break; 
+        texte[taille] = c; 
+        taille++;
+    }
+    texte[taille] = '\0';
 
-    printf("Fin Test");
-    printf("---Test Inode---");
-    inode=CreerInode(0,ORDINAIRE);
-    printf("=========Inode=========[%d]\n",Numero(inode));
-    printf("type: %d \n",Type(inode));
-    printf("taille: %ld Octets\n",Taille(inode));
-    printf("date dernier accès : %ld\n",DateDerAcces(inode));
-    printf("date dernière modification : %ld\n", DateDerModif(inode));
-    printf("date dernière modification inode : %ld\n",DateDerModifFichier(inode));
-    //printf("Données:\n %d \n",AfficherInode(inode)); à finir 
+    bloc = CreerBloc();
+    if (bloc == NULL) {
+        printf("erreur creation bloc\n");
+        return 1;
+    }
 
-    
+    EcrireContenuBloc(bloc, texte, taille);
+    printf("nombre de octets ecrits: %d\n", taille);
+
+    LireContenuBloc(bloc, lecture, taille);
+    lecture[taille] = '\0';
+    printf("Contenu lu: %s\n", lecture);
+
+    printf("Fin Test\n");
+
+    printf("---Test Inode---\n");
+    inode = CreerInode(1, ORDINAIRE);
+    if (inode == NULL) {
+        printf("erreur creation inode\n");
+        return 1;
+    }
+    printf("inode cree\n");
+
+    // remplir l'inode avec les données du bloc
+    LireDonneesInode1bloc(inode, texte, taille);
+    printf("inode remplit\n");
+
+    time_t t1 = DateDerAcces(inode);
+    time_t t2 = DateDerModif(inode);
+    time_t t3 = DateDerModifFichier(inode);
+
+    printf("=========Inode=========[%d]\n", Numero(inode));
+
+    printf("type: ");
+    switch (Type(inode)) {
+        case ORDINAIRE: printf("ORDINAIRE\n"); break;
+        case REPERTOIRE: printf("REPERTOIRE\n"); break;
+        case AUTRE: printf("AUTRE\n"); break;
+        default: printf("INCONNU\n"); break;
+    }
+
+    printf("taille: %ld Octets utilisés\n", Taille(inode));
+    printf("date dernier accès : %s", ctime(&t1));
+    printf("date dernière modification : %s", ctime(&t2));
+    printf("date dernière modification inode : %s", ctime(&t3));
+
+    DetruireInode(&inode);
+    if (inode == NULL)
+        printf("\nInode détruit correctement.\n");
+
     return 0;
 }
