@@ -6,7 +6,8 @@
  **/
 
 #include "bloc.h"
-
+#include <stdlib.h>
+#include <stdio.h>
 /* V1
  * Crée et retourne un nouveau bloc de données.
  * Entrée : Aucune
@@ -14,6 +15,14 @@
  */
 tBloc CreerBloc (void) {
   // A COMPLETER
+  tBloc Bloc;
+  Bloc = (tBloc) malloc(TAILLE_BLOC * sizeof(unsigned char));
+  if (Bloc == NULL){
+    fprintf(stderr,"CreerBloc : probleme creation\n");
+    return NULL;
+  }
+  return Bloc;
+
 }
 
 /* V1
@@ -23,6 +32,11 @@ tBloc CreerBloc (void) {
  */
 void DetruireBloc(tBloc *pBloc) {
   // A COMPLETER
+  if (*pBloc != NULL && pBloc!=NULL){
+    free(*pBloc);
+    pBloc=NULL;
+  }
+  
 }
 
 /* V1
@@ -33,6 +47,20 @@ void DetruireBloc(tBloc *pBloc) {
  */
 long EcrireContenuBloc (tBloc bloc, unsigned char *contenu, long taille) {
   // A COMPLETER
+
+  int i;
+  int nbOctets;
+  if (taille <= TAILLE_BLOC){
+    nbOctets = taille;
+  }else{
+    nbOctets = TAILLE_BLOC;
+  }
+  for (i=0;i<nbOctets;i++){
+    bloc[i]=contenu[i];
+    }
+
+  return nbOctets;
+  
 }
 
 /* V1
@@ -43,4 +71,16 @@ long EcrireContenuBloc (tBloc bloc, unsigned char *contenu, long taille) {
  */
 long LireContenuBloc(tBloc bloc, unsigned char *contenu, long taille) {
   // A COMPLETER
+  int i;
+  int nbOctets;
+  if (taille <= TAILLE_BLOC){
+    nbOctets = taille;
+  }else{
+    nbOctets = TAILLE_BLOC;
+  }
+  for (i=0;i<nbOctets;i++){
+    contenu[i]=bloc[i];
+  }
+
+  return nbOctets;
 }

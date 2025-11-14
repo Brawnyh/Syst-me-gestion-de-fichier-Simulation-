@@ -58,6 +58,13 @@ struct sSF
 */
 static tSuperBloc CreerSuperBloc(char nomDisque[]) {
   // A COMPLETER
+  tSuperBloc superBloc;
+  superBloc=(tSuperBloc*) malloc(TAILLE_NOM_DISQUE * (sizeof(tSuperBloc)));
+  if (superBloc==NULL){
+    fprintf(stderr,"Erreur de allocation de un superBloc\n");
+    return NULL;
+  }
+  return superBloc;
 }
 
 /* V2
