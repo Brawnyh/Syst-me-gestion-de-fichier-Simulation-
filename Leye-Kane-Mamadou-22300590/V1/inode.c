@@ -141,20 +141,24 @@ natureFichier Type(tInode inode) {
  */
 void AfficherInode(tInode inode) {
   // A COMPLETER
-  printf("Inode %u\n", (*inode).numero);
-  printf("Type : %d\n", (int)(*inode).type);
-  printf("Taille : %ld octets\n", (*inode).taille);
-  printf("Blocs de donnees :\n");
-  for (int i = 0; i < NB_BLOCS_DIRECTS; i++) {
-    if (inode->blocDonnees[i] != NULL){
-      printf("  Bloc %d : alloue\n", i);
-    }else{
-      printf("  Bloc %d : vide\n", i);
-    }
-            
+    time_t t1 = DateDerAcces(inode);
+    time_t t2 = DateDerModif(inode);
+    time_t t3 = DateDerModifFichier(inode);
+
+    printf("=========Inode=========[%d]\n", Numero(inode));
+    printf("type: ");
+    switch (Type(inode)) {
+        case ORDINAIRE: printf("ORDINAIRE\n"); break;
+        case REPERTOIRE: printf("REPERTOIRE\n"); break;
+        case AUTRE: printf("AUTRE\n"); break;
+        default: printf("INCONNU\n"); break;
     }
 
-}
+    printf("taille: %ld Octets utilisés\n", Taille(inode));
+    printf("date dernier accès : %s", ctime(&t1));
+    printf("date dernière modification : %s", ctime(&t2));
+    printf("date dernière modification inode : %s", ctime(&t3));
+  }
 
 /* V1
  * Copie dans un inode les taille octets situés à l’adresse contenu.

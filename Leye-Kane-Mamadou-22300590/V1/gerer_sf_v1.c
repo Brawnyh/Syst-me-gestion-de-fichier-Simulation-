@@ -2,7 +2,7 @@
 #include "bloc.h"
 #include "inode.h"//tiene que ser el .h
 
-
+//AfficherInode a utiliser au lieu de tout faire dans le main
 int main(void){
     tInode inode;
     tBloc bloc;
@@ -54,7 +54,6 @@ int main(void){
     time_t t3 = DateDerModifFichier(inode);
 
     printf("=========Inode=========[%d]\n", Numero(inode));
-
     printf("type: ");
     switch (Type(inode)) {
         case ORDINAIRE: printf("ORDINAIRE\n"); break;

@@ -183,5 +183,18 @@ void AfficherSF(tSF sf){
  */
 long Ecrire1BlocFichierSF(tSF sf, char nomFichier[], natureFichier type) {
   // A COMPLETER
+  if (sf==NULL){
+    return -1;
+  }
+  FILE *f;
+  f=fopen(nomFichier,"rb");
+
+  long n=fread(nomFichier,sizeof(natureFichier),sizeof(nomFichier),f);
+
+
+  flcose(f);
+
+
+
 
 }
