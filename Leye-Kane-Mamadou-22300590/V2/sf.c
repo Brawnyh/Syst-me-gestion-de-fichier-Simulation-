@@ -7,6 +7,7 @@
 
 #include "sf.h"
 #include "bloc.h"
+#include "inode.h"
 #include <stdlib.h>
 // Taille maximale du nom du SF (ou nom du disque)
 #define TAILLE_NOM_DISQUE 24
@@ -189,10 +190,40 @@ long Ecrire1BlocFichierSF(tSF sf, char nomFichier[], natureFichier type) {
   FILE *f;
   f=fopen(nomFichier,"rb");
 
-  long n=fread(nomFichier,sizeof(natureFichier),sizeof(nomFichier),f);
+  if (f==NULL) {
+    return -1;
+  }
 
+  unsigned char b[TAILLE_BLOC];
+  
+  long nb=fread(b,1,TAILLE_BLOC,f);
+  fclose(f);
 
-  flcose(f);
+  tInode inode = CreerInode(sf->listeInodes.nbInodes + 1,type);
+  if (inode==NULL){
+    return -1;
+  }
+  //mremplire inode avec donnes du fichier
+  long ecrit=LireDonneesInode1bloc(inode,b,nb);
+  if (ecrit<0){
+    return -1;
+  }
+
+  struct sListeInodesElement *elt =malloc(sizeof(struct sListeInodesElement));
+  elt->inode=inode;
+  elt->suivant=NULL;
+
+  if(sf->listeInodes.premier==NULL){
+    sf->listeInodes.premier=elt;
+    sf->listeInodes.dernier=elt;
+  }else{
+    sf->listeInodes.dernier->suivant=elt; //??
+    sf->listeInodes.dernier=elt;
+  }
+  sf->listeInodes.nbInodes++;
+  sf->superBloc->dateDerModif=time(NULL);
+  
+  return ecrit;
 
 
 

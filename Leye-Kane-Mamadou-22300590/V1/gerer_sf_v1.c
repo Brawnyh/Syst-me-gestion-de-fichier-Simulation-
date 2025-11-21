@@ -49,23 +49,7 @@ int main(void){
     LireDonneesInode1bloc(inode, texte, taille);
     printf("inode remplit\n");
 
-    time_t t1 = DateDerAcces(inode);
-    time_t t2 = DateDerModif(inode);
-    time_t t3 = DateDerModifFichier(inode);
-
-    printf("=========Inode=========[%d]\n", Numero(inode));
-    printf("type: ");
-    switch (Type(inode)) {
-        case ORDINAIRE: printf("ORDINAIRE\n"); break;
-        case REPERTOIRE: printf("REPERTOIRE\n"); break;
-        case AUTRE: printf("AUTRE\n"); break;
-        default: printf("INCONNU\n"); break;
-    }
-
-    printf("taille: %ld Octets utilisés\n", Taille(inode));
-    printf("date dernier accès : %s", ctime(&t1));
-    printf("date dernière modification : %s", ctime(&t2));
-    printf("date dernière modification inode : %s", ctime(&t3));
+    AfficherInode(inode);
 
     DetruireInode(&inode);
     if (inode == NULL)
