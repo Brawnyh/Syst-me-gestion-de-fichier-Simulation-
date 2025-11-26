@@ -6,9 +6,8 @@
  **/
 
 #include "bloc.h"
-
-// Dans le .h : typedef unsigned char *tBloc;
-
+#include <stdlib.h>
+#include <stdio.h>
 /* V1
  * Crée et retourne un nouveau bloc de données.
  * Entrée : Aucune
@@ -16,6 +15,14 @@
  */
 tBloc CreerBloc (void) {
   // A COMPLETER
+  tBloc Bloc;
+  Bloc = (tBloc) malloc(TAILLE_BLOC * sizeof(unsigned char));
+  if (Bloc == NULL){
+    fprintf(stderr,"CreerBloc : probleme creation\n");
+    return NULL;
+  }
+  return Bloc;
+
 }
 
 /* V1
@@ -23,8 +30,13 @@ tBloc CreerBloc (void) {
  * Entrée : le bloc à détruire (libération mémoire allouée)
  * Retour : aucun
  */
-void DetruireBloc(tBloc *pBloc){
+void DetruireBloc(tBloc *pBloc) {
   // A COMPLETER
+  if (*pBloc != NULL && pBloc!=NULL){
+    free(*pBloc);
+    pBloc=NULL;
+  }
+  
 }
 
 /* V1
@@ -33,8 +45,22 @@ void DetruireBloc(tBloc *pBloc){
  * Entrées : le bloc, l'adresse du contenu à copier et sa taille en octets
  * Retour : le nombre d'octets effectivement écrits dans le bloc
  */
-long EcrireContenuBloc (tBloc bloc, unsigned char *contenu, long taille){
+long EcrireContenuBloc (tBloc bloc, unsigned char *contenu, long taille) {
   // A COMPLETER
+
+  int i;
+  int nbOctets;
+  if (taille <= TAILLE_BLOC){
+    nbOctets = taille;
+  }else{
+    nbOctets = TAILLE_BLOC;
+  }
+  for (i=0;i<nbOctets;i++){
+    bloc[i]=contenu[i];
+    }
+
+  return nbOctets;
+  
 }
 
 /* V1
@@ -43,9 +69,22 @@ long EcrireContenuBloc (tBloc bloc, unsigned char *contenu, long taille){
  * Entrées : le bloc, l'adresse contenu à laquelle recopier et la taille en octets du bloc
  * Retour : le nombre d'octets effectivement lus dans le bloc
  */
-long LireContenuBloc(tBloc bloc, unsigned char *contenu, long taille){
+long LireContenuBloc(tBloc bloc, unsigned char *contenu, long taille) {
   // A COMPLETER
+  int i;
+  int nbOctets;
+  if (taille <= TAILLE_BLOC){
+    nbOctets = taille;
+  }else{
+    nbOctets = TAILLE_BLOC;
+  }
+  for (i=0;i<nbOctets;i++){
+    contenu[i]=bloc[i];
+  }
+
+  return nbOctets;
 }
+
 
 /* V3
  * Sauvegarde les données d'un bloc en les écrivant dans un fichier (sur disque).
@@ -53,7 +92,35 @@ long LireContenuBloc(tBloc bloc, unsigned char *contenu, long taille){
  * Retour : 0 en cas de succès, -1 en cas d'erreur
  */
 int SauvegarderBloc(tBloc bloc, long taille, FILE *fichier){
-  // A COMPLETER
+  long nbaEcrire;
+  size_t ecris;
+
+  if (bloc==NULL || fichier == NULL){
+    return -1;
+  }
+
+  if (taille<=0){
+      return -1;
+  }
+  
+  //verification depassement
+  if (taille>TAILLE_BLOC){
+    nbaEcrire=TAILLE_BLOC;
+  }else{
+    nbaEcrire=taille;
+  }
+
+  //ecriture bin
+  ecris=fwrite((const void *)bloc,1,(size_t)nbaEcrire,fichier);
+  if ((long)ecris!=nbaEcrire){
+    printf("Erreur de ecriture");
+    return -1;
+  }
+
+  return 0;
+
+
+
 }
 
 /* V3
@@ -62,5 +129,24 @@ int SauvegarderBloc(tBloc bloc, long taille, FILE *fichier){
  * Retour : 0 en cas de succès, -1 en cas d'erreur
  */
 int ChargerBloc(tBloc bloc, long taille, FILE *fichier){
-  // A COMPLETER
+  long nbalire;
+  size_t lire;
+
+    //verification depassement
+  if (taille>TAILLE_BLOC){
+    nbalire=TAILLE_BLOC;
+  }else{
+    nbalire=taille;
+  }
+
+  //ecriture bin
+  lire=fread((const void *)bloc,1,(size_t)nbalire,fichier);
+  if ((long)lire!=nbalire){
+    printf("Erreur de lecture");
+    return -1;
+  }
+
+  return 0;
+
+
 }

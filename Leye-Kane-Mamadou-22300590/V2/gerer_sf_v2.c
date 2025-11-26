@@ -37,6 +37,7 @@ int main(void){
     printf("Octets ecrits dans le SF : %ld\n", nb);
 
     printf("\n=== Contenu du systeme de fichiers ===\n");
+    
     AfficherSF(sf);
 
     printf("\nDestruction du SF...\n");

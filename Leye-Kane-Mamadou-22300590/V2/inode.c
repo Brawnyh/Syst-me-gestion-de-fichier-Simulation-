@@ -159,6 +159,22 @@ void AfficherInode(tInode inode) {
     printf("date dernier accès : %s", ctime(&t1));
     printf("date dernière modification : %s", ctime(&t2));
     printf("date dernière modification inode : %s", ctime(&t3));
+
+    //affichage inode
+    printf("Bloc utilises: \n");
+    for (int i = 0; i < NB_BLOCS_DIRECTS; i++) {
+
+      if (inode->blocDonnees[i] != NULL) {
+        printf("  Bloc %d present\n", i);
+        printf("  Contenu du bloc : ");
+        for (int j = 0; j < inode->taille && j < TAILLE_BLOC; j++) {
+          printf("%c", inode->blocDonnees[i][j]);
+        }
+
+        printf("\n");
+      }
+
+    }
 }
 
 /* V1

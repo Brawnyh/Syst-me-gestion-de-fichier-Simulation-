@@ -17,7 +17,7 @@
 tBloc CreerBloc (void) {
   // A COMPLETER
   tBloc Bloc;
-  Bloc = (tBloc) malloc(TAILLE_BLOC * sizeof(unsigned char));
+  Bloc = (tBloc) malloc(TAILLE_BLOC * sizeof(unsigned char)); //t'est pas oblige de faire un malloc avec un cast
   if (Bloc == NULL){
     fprintf(stderr,"CreerBloc : probleme creation\n");
     return NULL;
