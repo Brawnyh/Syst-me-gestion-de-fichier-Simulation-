@@ -136,7 +136,10 @@ void AfficherInode(tInode inode) {
     time_t t1 = DateDerAcces(inode);
     time_t t2 = DateDerModif(inode);
     time_t t3 = DateDerModifFichier(inode);
-
+    if(inode==NULL){
+      printf("vide");
+      return;
+    }
     printf("=========Inode=========[%d]\n", Numero(inode));
     printf("type: ");
     switch (Type(inode)) {
@@ -159,6 +162,7 @@ void AfficherInode(tInode inode) {
         printf("  Bloc %d present\n", i);
         printf("  Contenu du bloc : ");
         for (int j = 0; j < inode->taille && j < TAILLE_BLOC; j++) {
+          if (inode->blocDonnees[i][j] == '\0') break;
           printf("%c", inode->blocDonnees[i][j]);
         }
 
@@ -287,7 +291,20 @@ long EcrireDonneesInode(tInode inode, unsigned char *contenu, long taille, long 
  * Sortie : 0 en cas de succès, -1 en cas d'erreur
  */
 int SauvegarderInode(tInode inode, FILE *fichier) {
-  // A COMPLETER
+    if (inode == NULL || fichier == NULL) return -1;
+
+    if (fwrite(&(inode->numero), sizeof(unsigned int), 1, fichier) != 1) return -1;
+    if (fwrite(&(inode->type), sizeof(natureFichier), 1, fichier) != 1) return -1;
+    if (fwrite(&(inode->taille), sizeof(long), 1, fichier) != 1) return -1;
+    if (fwrite(&(inode->dateDerAcces), sizeof(time_t), 1, fichier) != 1) return -1;
+    if (fwrite(&(inode->dateDerModif), sizeof(time_t), 1, fichier) != 1) return -1;
+    if (fwrite(&(inode->dateDerModifInode), sizeof(time_t), 1, fichier) != 1) return -1;
+
+    for (int i = 0; i < NB_BLOCS_DIRECTS; i++) {
+        if (fwrite(&(inode->blocDonnees[i]), sizeof(tBloc), 1, fichier) != 1) return -1;
+    }
+
+    return 0;
   
 }
 
@@ -298,5 +315,27 @@ int SauvegarderInode(tInode inode, FILE *fichier) {
  * Sortie : 0 en cas de succès, -1 en cas d'erreur
  */
 int ChargerInode(tInode *pInode, FILE *fichier) {
-  // A COMPLETER
+    if (pInode == NULL || fichier == NULL) return -1;
+    tInode inode = malloc(sizeof(struct sInode));
+    if (inode == NULL) return -1;
+
+    if (fread(&inode->numero, sizeof(unsigned int), 1, fichier) != 1 ||
+        fread(&inode->type, sizeof(natureFichier), 1, fichier) != 1 ||
+        fread(&inode->taille, sizeof(long), 1, fichier) != 1 ||
+        fread(&inode->dateDerAcces, sizeof(time_t), 1, fichier) != 1 ||
+        fread(&inode->dateDerModif, sizeof(time_t), 1, fichier) != 1 ||
+        fread(&inode->dateDerModifInode, sizeof(time_t), 1, fichier) != 1){
+          free(inode);
+          return -1;
+    }
+
+    for (int i = 0; i < NB_BLOCS_DIRECTS; i++) {
+        if (fread(&inode->blocDonnees[i], sizeof(tBloc), 1, fichier) != 1) {
+            free(inode);
+            return -1;
+        }
+    }
+
+    *pInode = inode;
+    return 0;
 }
