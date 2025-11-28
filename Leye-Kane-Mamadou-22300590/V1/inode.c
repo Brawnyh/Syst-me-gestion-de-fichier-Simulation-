@@ -172,16 +172,16 @@ long LireDonneesInode1bloc(tInode inode, unsigned char *contenu, long taille) {
   if((inode->blocDonnees[0]==NULL)){
     inode->blocDonnees[0]=CreerBloc();
     if (inode->blocDonnees[0]==NULL){
-      return -1;
+        return -1;
     }
   }
 
-  long nb=EcrireContenuBloc(inode->blocDonnees[0],contenu,taille);
+  long nb=EcrireContenuBloc(inode->blocDonnees[0],contenu,taille); //fonction bloc reutiliser au lieu de réecrire
   if (nb>=0){
     inode->taille=nb;
     inode->dateDerModif=time(NULL);
   }
-
+ 
   return nb;
 }
 

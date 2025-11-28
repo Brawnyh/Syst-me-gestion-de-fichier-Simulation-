@@ -139,7 +139,7 @@ int ChargerBloc(tBloc bloc, long taille, FILE *fichier){
     nbalire=taille;
   }
 
-  //ecriture bin
+  //lecture bin
   lire=fread((const void *)bloc,1,(size_t)nbalire,fichier);
   if ((long)lire!=nbalire){
     printf("Erreur de lecture");
