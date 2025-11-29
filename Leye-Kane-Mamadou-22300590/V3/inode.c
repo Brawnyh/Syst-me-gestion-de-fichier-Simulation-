@@ -255,28 +255,36 @@ long LireDonneesInode(tInode inode, unsigned char *contenu, long taille, long de
  * Sortie : le nombre d'octets effectivement écrits, ou -1 en cas d'erreur
  */
 long EcrireDonneesInode(tInode inode, unsigned char *contenu, long taille, long decalage) {
-  // A COMPLETER
-    if (inode==NULL || contenu==NULL) return -1;
+    if (inode == NULL || contenu == NULL) return -1;
+    if (decalage < 0) return -1;
+    if (taille <= 0) return 0;
 
-    long ecrits = 0;     
-    long pos = decalage;  
-    long finPossible = NB_BLOCS_DIRECTS * TAILLE_BLOC;  //limite
+    long ecrits = 0;
+    long pos = decalage;
+    long finPossible = (long)NB_BLOCS_DIRECTS * TAILLE_BLOC;  // limite
 
     if (pos >= finPossible) return -1;
 
     while (ecrits < taille && pos < finPossible) {
-
         int numBloc = pos / TAILLE_BLOC;
         int posBloc = pos % TAILLE_BLOC;
 
-        if (inode->blocDonnees[numBloc] == NULL) return -1;
+        if (numBloc >= NB_BLOCS_DIRECTS) break; 
+
+        //creer un bloc si il n'existe pas
+        if (inode->blocDonnees[numBloc] == NULL) {
+            inode->blocDonnees[numBloc] = CreerBloc();
+            if (inode->blocDonnees[numBloc] == NULL) {
+                return -1;
+            }
+        }
 
         inode->blocDonnees[numBloc][posBloc] = contenu[ecrits];
 
-        ecrits+=1;
-        pos+=1;
+        ecrits += 1;
+        pos += 1;
     }
-    //on met a jours la taille
+
     if (pos > inode->taille)
         inode->taille = pos;
 
@@ -303,7 +311,17 @@ int SauvegarderInode(tInode inode, FILE *fichier) {
     if (fwrite(&(inode->dateDerModifInode), sizeof(time_t), 1, fichier) != 1) return -1;
 
     for (int i = 0; i < NB_BLOCS_DIRECTS; i++) {
+        char present;
+        if ((inode->blocDonnees[i]!=NULL)){
+            present=1;
+        }else{
+          present=0;
+        }
         if (fwrite(&(inode->blocDonnees[i]), sizeof(tBloc), 1, fichier) != 1) return -1;
+        if (present){
+          if (fwrite(inode->blocDonnees[i],sizeof(unsigned char),TAILLE_BLOC,fichier)!=TAILLE_BLOC) return -1;
+
+        }
     }
 
     return 0;
@@ -327,17 +345,44 @@ int ChargerInode(tInode *pInode, FILE *fichier) {
         fread(&inode->dateDerAcces, sizeof(time_t), 1, fichier) != 1 ||
         fread(&inode->dateDerModif, sizeof(time_t), 1, fichier) != 1 ||
         fread(&inode->dateDerModifInode, sizeof(time_t), 1, fichier) != 1){
+
           free(inode);
           return -1;
     }
 
     for (int i = 0; i < NB_BLOCS_DIRECTS; i++) {
-        if (fread(&inode->blocDonnees[i], sizeof(tBloc), 1, fichier) != 1) {
-            free(inode);
-            return -1;
+        char present;
+        if (fread(&present,sizeof(char),1,fichier)!=1){
+          free(inode);
+          return -1;
         }
-    }
+        if (present){
+          inode->blocDonnees[i]=CreerBloc();
+          if(inode->blocDonnees[i]==NULL){
+            //liberaiton bloc d'avant
+            for(int j=0;j<i;j++){
+              if(inode->blocDonnees[j]!=NULL){
+                free(inode->blocDonnees[j]);
+              }
+              free(inode);
+              return -1;
+            }
+          }
+          if(fread(inode->blocDonnees[i],sizeof(unsigned char),TAILLE_BLOC,fichier)!=TAILLE_BLOC){
+            //free tout
+            for (int j=0;j<=i;j++){
+              if(inode->blocDonnees[j]!=NULL){
+                free(inode->blocDonnees[i]);
+              }
+              free(inode);
+              return -1;
+            }
+          }
+        }else{
+          inode->blocDonnees[i]=NULL;
+        }
 
-    *pInode = inode;
-    return 0;
-}
+        }
+        *pInode = inode;
+        return 0;
+    }
