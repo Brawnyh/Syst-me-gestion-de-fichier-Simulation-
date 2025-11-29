@@ -9,6 +9,7 @@
 #include "bloc.h"
 #include "inode.h"
 #include <stdlib.h>
+
 // Taille maximale du nom du SF (ou nom du disque)
 #define TAILLE_NOM_DISQUE 24
 

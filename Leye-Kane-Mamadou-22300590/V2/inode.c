@@ -162,18 +162,14 @@ void AfficherInode(tInode inode) {
 
     //affichage inode
     printf("Bloc utilises: \n");
-    for (int i = 0; i < NB_BLOCS_DIRECTS; i++) {
-
-      if (inode->blocDonnees[i] != NULL) {
-        printf("  Bloc %d present\n", i);
-        printf("  Contenu du bloc : ");
-        for (int j = 0; j < inode->taille && j < TAILLE_BLOC; j++) {
-          printf("%c", inode->blocDonnees[i][j]);
+    if (inode->blocDonnees[0] != NULL) {
+        printf("Contenu du bloc : ");
+        for (int j = 0; j < inode->taille; j++) {
+            unsigned char c = inode->blocDonnees[0][j];
+            if (c == '\0') break;  
+            printf("%c", c);
         }
-
         printf("\n");
-      }
-
     }
 }
 

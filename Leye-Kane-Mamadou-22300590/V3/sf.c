@@ -7,8 +7,10 @@
 
 #include "sf.h"
 #include "bloc.h"
-#include "inode.h"
+#include "inode.h" //ne detecte pas ceci
 #include <stdlib.h>
+
+
 
 // Taille maximale du nom du SF (ou nom du disque)
 #define TAILLE_NOM_DISQUE 24
@@ -238,7 +240,57 @@ long Ecrire1BlocFichierSF(tSF sf, char nomFichier[], natureFichier type) {
  * Sortie : le nombre d'octets effectivement écrits, -1 en cas d'erreur.
  */
 long EcrireFichierSF(tSF sf, char nomFichier[], natureFichier type) {
-  // A COMPLETER
+    if (sf == NULL) return -1;
+
+    FILE *f = fopen(nomFichier, "rb");
+    if (f == NULL) return -1;
+
+    unsigned char tot[NB_BLOCS_DIRECTS * TAILLE_BLOC];
+    long lus = fread(tot, 1, NB_BLOCS_DIRECTS * TAILLE_BLOC, f);
+    fclose(f);
+
+    if (lus <= 0) return -1;
+    tInode inode = CreerInode(sf->listeInodes.nbInodes + 1, type);
+    if (inode == NULL) return -1;
+    
+    long pos = 0;
+
+    //On remplis les bloques de l'inode
+    while (pos < lus) {
+        int numBloc = pos / TAILLE_BLOC;
+        inode->blocDonnees[numBloc] = CreerBloc();
+        if (inode->blocDonnees[numBloc] == NULL) return -1;
+
+        // Bytes a copier
+        long restant = lus - pos;
+        long nb = (restant > TAILLE_BLOC ? TAILLE_BLOC : restant);
+
+        for (int i = 0; i < nb; i++){
+          inode->blocDonnees[numBloc][i] = tot[pos + i];
+        }
+            
+
+        pos += nb;
+    }
+
+    inode->taille = lus;
+    inode->dateDerModif = time(NULL);
+    inode->dateDerModifInode = time(NULL);
+
+    // Añadir inode a la lista
+    struct sListeInodesElement *elt = malloc(sizeof(struct sListeInodesElement));
+    elt->inode = inode;
+    elt->suivant = NULL;
+
+    if (sf->listeInodes.dernier == NULL)
+        sf->listeInodes.premier = elt;
+    else
+        sf->listeInodes.dernier->suivant = elt;
+
+    sf->listeInodes.dernier = elt;
+    sf->listeInodes.nbInodes++;
+    sf->superBloc->dateDerModif = time(NULL);
+    return lus;
 }
 
 /* V3
@@ -247,7 +299,30 @@ long EcrireFichierSF(tSF sf, char nomFichier[], natureFichier type) {
  * Sortie : 0 en cas de succèe, -1 en cas d'erreur
  */
 int SauvegarderSF(tSF sf, char nomFichier[]) {
-  // A COMPLETER
+    if (sf == NULL) return -1;
+    FILE *f = fopen(nomFichier, "wb");
+    if (f == NULL) return -1;
+    fwrite(sf->superBloc, sizeof(struct sSuperBloc), 1, f);
+    fwrite(&(sf->listeInodes.nbInodes), sizeof(int), 1, f);
+    struct sListeInodesElement *tmp = sf->listeInodes.premier;
+    while (tmp != NULL) {
+
+      tInode inode = tmp->inode;
+      fwrite(inode, sizeof(struct sInode), 1, f);
+      for (int i = 0; i < NB_BLOCS_DIRECTS; i++) {
+          if (inode->blocDonnees[i] != NULL){
+               fwrite(inode->blocDonnees[i], TAILLE_BLOC, 1, f);
+          }else {
+              unsigned char vide[TAILLE_BLOC] = {0};
+              fwrite(vide, TAILLE_BLOC, 1, f);
+            }
+        }
+
+        tmp = tmp->suivant;
+    }
+
+    fclose(f);
+    return 0;
 }
 
 /* V3
@@ -256,5 +331,49 @@ int SauvegarderSF(tSF sf, char nomFichier[]) {
  * Sortie : 0 en cas de succèe, -1 en cas d'erreur
  */
 int ChargerSF(tSF *pSF, char nomFichier[]) {
+    FILE *f = fopen(nomFichier, "rb");
+    if (f == NULL) return -1;
+
+    tSF sf = malloc(sizeof(struct sSF));
+    if (sf == NULL) return -1;
+
+    sf->superBloc = malloc(sizeof(struct sSuperBloc));
+    fread(sf->superBloc, sizeof(struct sSuperBloc), 1, f);
+
+    // on initialise la liste
+    sf->listeInodes.nbInodes = 0;
+    sf->listeInodes.premier = NULL;
+    sf->listeInodes.dernier = NULL;
+
+    int nb;
+    fread(&nb, sizeof(int), 1, f);
+
+    for (int k = 0; k < nb; k++) {
+      tInode inode = malloc(sizeof(struct sInode));
+      fread(inode, sizeof(struct sInode), 1, f);
+      for (int i = 0; i < NB_BLOCS_DIRECTS; i++) {
+          inode->blocDonnees[i] = CreerBloc();
+          fread(inode->blocDonnees[i], TAILLE_BLOC, 1, f);
+        }
+
+      struct sListeInodesElement *elt = malloc(sizeof(struct sListeInodesElement));
+      elt->inode = inode;
+      elt->suivant = NULL;
+      if (sf->listeInodes.premier == NULL){
+        sf->listeInodes.premier = elt;
+      }
+          
+      else{
+        sf->listeInodes.dernier->suivant = elt;
+        sf->listeInodes.dernier = elt;
+        sf->listeInodes.nbInodes++;
+      }
+        
+    }
+
+    fclose(f);
+    *pSF = sf;
+    return 0;
+
   // A COMPLETER
 }

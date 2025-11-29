@@ -50,6 +50,7 @@ int main(void){
     printf("inode remplit\n");
 
     AfficherInode(inode);
+    //donnes a afficher
 
     DetruireInode(&inode);
     if (inode == NULL)

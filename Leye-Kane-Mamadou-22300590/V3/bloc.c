@@ -8,6 +8,7 @@
 #include "bloc.h"
 #include <stdlib.h>
 #include <stdio.h>
+
 /* V1
  * Crée et retourne un nouveau bloc de données.
  * Entrée : Aucune
