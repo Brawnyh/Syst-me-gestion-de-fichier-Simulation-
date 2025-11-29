@@ -6,6 +6,7 @@
  **/
 #include "inode.h"
 #include "bloc.h"
+#include <stdlib.h>
 
 #define NB_BLOCS_DIRECTS 10
 

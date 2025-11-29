@@ -10,10 +10,11 @@
 
 #include <time.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 // Taille maximale du nom d'un fichier dans un système de fichiers
 #define TAILLE_NOM_FICHIER 24
-
+#define NB_BLOCS_DIRECTS 10
 // Type représentant un inode
 typedef struct sInode *tInode;
 

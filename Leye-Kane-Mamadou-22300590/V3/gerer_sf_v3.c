@@ -4,49 +4,69 @@
 #include <stdio.h>
 
 
-int main(void){
-    
-    printf("=== TEST Ecrire1BlocFichierSF ===\n");
+
+int main(void) {
 
     char nomDisque[30];
     char nomFichier[100];
+    char sauvegarde[100];
 
-    printf("Nom du disque : ");
+    printf("Nom du disque pour le SF : ");
     scanf("%s", nomDisque);
 
-    printf("Nom du fichier (sur disque) a ecrire dans le SF : ");
+    printf("Nom du fichier (sur disque) a importer dans le SF : ");
     scanf("%s", nomFichier);
 
-    // creer le systeme de fichiers
+    printf("Nom du fichier de sauvegarde du SF : ");
+    scanf("%s", sauvegarde);
+
+    printf("\n=== CREATION SF ===\n");
     tSF sf = CreerSF(nomDisque);
-    if (sf == NULL){
-        printf("Erreur creation SF.\n");
+
+    if (!sf) {
+        printf("Erreur creation du SF\n");
         return 1;
     }
 
-    printf("SF cree.\n");
+    printf("\n=== ECRITURE FICHIER DANS LE SF  ===\n");
+    long nb = EcrireFichierSF(sf, nomFichier, ORDINAIRE);
 
-    long nb = Ecrire1BlocFichierSF(sf, nomFichier, ORDINAIRE);
-
-    if (nb < 0){
-        printf("Erreur ecriture fichier dans SF.\n");
+    if (nb < 0) {
+        printf("Erreur ecriture fichier dans SF\n");
         DetruireSF(&sf);
         return 1;
     }
 
-    printf("Octets ecrits dans le SF : %ld\n", nb);
+    printf("Octets ecrits : %ld\n", nb);
 
-    printf("\n=== Contenu du systeme de fichiers ===\n");
-    
+    printf("\n=== AFFICHAGE SF ===\n");
     AfficherSF(sf);
 
-    printf("\nDestruction du SF...\n");
+    printf("\n=== SAUVEGARDE SF ===\n");
+    if (SauvegarderSF(sf, sauvegarde) == 0){
+        printf("Sauvegarde reussie\n");
+    }else{
+        printf("Erreur sauvegarde\n");
+    }
+        
+    
+        
+
+    printf("\n=== DESTRUCTION SF ===\n");
     DetruireSF(&sf);
 
-    if (sf == NULL)
-        printf("SF detruit correctement.\n");
-    else
-        printf("Erreur destruction SF.\n");
+    printf("\n=== CHARGEMENT SF ===\n");
+    if (ChargerSF(&sf, sauvegarde) == 0){
+        printf("Chargement reussi\n");
+    }else{
+        printf("Erreur chargement\n");
+    }
+
+    printf("\n=== AFFICHAGE SF RESTAURE ===\n");
+    AfficherSF(sf);
+
+    printf("\n=== DESTRUCTION FINALE ===\n");
+    DetruireSF(&sf);
 
     return 0;
 }

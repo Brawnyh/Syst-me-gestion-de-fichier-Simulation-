@@ -33,9 +33,9 @@ tBloc CreerBloc (void) {
  */
 void DetruireBloc(tBloc *pBloc) {
   // A COMPLETER
-  if (*pBloc != NULL && pBloc!=NULL){
+  if (*pBloc != NULL || pBloc!=NULL){
     free(*pBloc);
-    pBloc=NULL;
+    *pBloc=NULL;
   }
   
 }
