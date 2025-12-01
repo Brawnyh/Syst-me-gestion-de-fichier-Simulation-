@@ -14,7 +14,7 @@ struct sRepertoire
 {
   tEntreesRepertoire *table;
 };
-#define MAX_ENTREES 8
+#define MAX_ENTREES 22
 /* V4
  * Crée un nouveau répertoire.
  * Entrée : aucune
@@ -32,7 +32,7 @@ tRepertoire CreerRepertoire(void)
   rep->table=malloc( MAX_ENTREES*sizeof(tEntreesRepertoire));
   if(rep->table==NULL){
     fprintf(stderr,"CreerRepertoire : probleme creation\n");
-    free(rep); 
+    free(rep);
     return NULL;
   }
   for(int i=0;i<MAX_ENTREES;i++){
@@ -73,7 +73,7 @@ static int CompterEntrees(tRepertoire rep)
         c++;
     return c;
 }
-
+//fin fonctions auxiliaire
 
 /* V4
  * Détruit un répertoire et libère la mémoire associée.
@@ -84,10 +84,12 @@ void DetruireRepertoire(tRepertoire *pRep)
 {
   if (*pRep!=NULL || pRep!=NULL) return;
 
-  for(int i=0;i<=MAX_ENTREES;i++){
+  for(int i=0;i<MAX_ENTREES;i++){
     free((*pRep)->table);
+    (*pRep)->table=NULL;
   }
   free((*pRep)->table);
+  (*pRep)->table=NULL;
   free(*pRep);
   *pRep=NULL;
 }
@@ -116,6 +118,7 @@ int EcrireEntreeRepertoire(tRepertoire rep, char nomEntree[], unsigned int numer
 
   copierNom(rep->table[n]->nomEntree,nomEntree);
   rep->table[n]->numeroInode=numeroInode;
+  return 0;
 
 }
 
@@ -138,16 +141,17 @@ int LireRepertoireDepuisInode(tRepertoire *pRep, tInode inode)
     int entree = 0;
 
     while (pos < lus && entree < MAX_ENTREES) {
-        // lecture nom
+        // lecture nomF
         int j = 0;
         while (pos < lus && buffer[pos] != ' ' && j < TAILLE_NOM_FICHIER) {
             (*pRep)->table[entree]->nomEntree[j++] = buffer[pos++];
         }
         (*pRep)->table[entree]->nomEntree[j] = '\0';
 
-        if (buffer[pos] == ' ') pos++;
+        pos++;
+        
 
-        // lecture num
+        // lecture numInode
         unsigned int num = 0;
         while (pos < lus && buffer[pos] >= '0' && buffer[pos] <= '9') {
             num = num * 10 + (buffer[pos] - '0');
@@ -159,6 +163,7 @@ int LireRepertoireDepuisInode(tRepertoire *pRep, tInode inode)
 
         entree++;
     }
+    return 0;
 }
 
 /* V4

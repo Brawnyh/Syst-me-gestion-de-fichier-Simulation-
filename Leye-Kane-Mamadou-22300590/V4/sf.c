@@ -12,7 +12,7 @@
 
 // Taille maximale du nom du SF (ou nom du disque)
 #define TAILLE_NOM_DISQUE 24
-#define MAX_ENTREES 8
+#define MAX_ENTREES 22
 
 // Définition du super-bloc
 struct sSuperBloc
@@ -83,12 +83,9 @@ static tSuperBloc CreerSuperBloc(char nomDisque[]) {
 */
 static void DetruireSuperBloc(tSuperBloc *pSuperBloc) {
   // A COMPLETER
-  if (*pSuperBloc!=NULL && pSuperBloc!=NULL){
-    free(*pSuperBloc);
-    *pSuperBloc=NULL;
-
-  }
-  
+  if (*pSuperBloc!=NULL && pSuperBloc!=NULL) return;
+  free(*pSuperBloc);
+  *pSuperBloc=NULL;
 }
 
 /* V2
