@@ -7,7 +7,7 @@
 #include "inode.h"
 #include "bloc.h"
 #include <stdlib.h>
-
+#include "repertoire.h"
 #define NB_BLOCS_DIRECTS 10
 
 struct sInode
@@ -390,7 +390,7 @@ int ChargerInode(tInode *pInode, FILE *fichier) {
         }
         *pInode = inode;
         return 0;
-    }
+}
 
 /* V4
  * Retourne la taille maximale d'un fichier contenu dans un inode.
@@ -398,5 +398,5 @@ int ChargerInode(tInode *pInode, FILE *fichier) {
  * Sortie : la taille du plus grand fichier de cet inode
  */
 long TailleMaxFichier(void) {
-  // A COMPLETER
+    return TAILLE_BLOC * NB_BLOCS_DIRECTS;  
 }

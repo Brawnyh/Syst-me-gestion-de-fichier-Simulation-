@@ -21,6 +21,8 @@ struct sEntreesRepertoire
   unsigned int numeroInode;
 };
 
+
+
 // Type représentant une entrée de répertoire
 typedef struct sEntreesRepertoire *tEntreesRepertoire;
 

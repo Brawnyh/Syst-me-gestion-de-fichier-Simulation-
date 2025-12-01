@@ -197,7 +197,7 @@ long Ecrire1BlocFichierSF(tSF sf, char nomFichier[], natureFichier type) {
   }
 
   unsigned char b[TAILLE_BLOC];
-  
+    
   long nb=fread(b,1,TAILLE_BLOC,f);
   fclose(f);
 
