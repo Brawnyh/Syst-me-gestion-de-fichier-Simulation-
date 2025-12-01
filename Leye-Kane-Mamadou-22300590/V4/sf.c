@@ -58,25 +58,50 @@ struct sSF
 */
 static tSuperBloc CreerSuperBloc(char nomDisque[]) {
   // A COMPLETER
+  tSuperBloc superBloc;
+  int i;
+  superBloc=(tSuperBloc) malloc(sizeof(struct sSuperBloc));;
+  if (superBloc==NULL){
+    fprintf(stderr,"Erreur de allocation de un superBloc\n");
+    return NULL;
+  }
+  for (i = 0; i < TAILLE_NOM_DISQUE && nomDisque[i] != '\0'; i++) {
+    superBloc->nomDisque[i] = nomDisque[i];
+  }
+  superBloc->nomDisque[i] = '\0';
+  superBloc->dateDerModif = time(NULL);
+
+  return superBloc;
 }
 
-/* V3
+/* V2
 *  Détruit un super-bloc.
+* Fonction non publique (static)
 * Entrée : le super-bloc à détruire
 * Sortie : aucune
 */
 static void DetruireSuperBloc(tSuperBloc *pSuperBloc) {
   // A COMPLETER
+  if (*pSuperBloc!=NULL && pSuperBloc!=NULL){
+    free(*pSuperBloc);
+    *pSuperBloc=NULL;
+
+  }
+  
 }
 
-/* V3
+/* V2
 *  Affiche le contenu d'un super-bloc.
+* Fonction non publique (static)
 * Entrée : le super-bloc à afficher
 * Sortie : aucune
 */
 static void AfficherSuperBloc(tSuperBloc superBloc) {
   // A COMPLETER
+  printf("Nom disque : %s\n", superBloc->nomDisque);
+  printf("Derniere modification : %s", ctime(&(superBloc->dateDerModif)));
 }
+
 
 /* V2 & V4
  * Crée un nouveau système de fichiers.
@@ -92,8 +117,25 @@ tSF CreerSF (char nomDisque[]){
  * Entrée : le SF à détruire
  * Sortie : aucune
  */
- void DetruireSF(tSF *pSF) {
-  // A COMPLETER
+void DetruireSF(tSF *pSF) {
+  
+  struct sListeInodesElement *tmp;
+
+  if (pSF == NULL || *pSF == NULL)
+    return;
+  tmp = (*pSF)->listeInodes.premier;
+  while (tmp != NULL) {
+
+    struct sListeInodesElement *suiv = tmp->suivant;
+    DetruireInode(&(tmp->inode));
+    free(tmp);
+    tmp = suiv;
+  }
+
+  DetruireSuperBloc(&((*pSF)->superBloc));
+
+  free(*pSF);
+  *pSF = NULL;
 }
 
 /* V2
@@ -102,8 +144,19 @@ tSF CreerSF (char nomDisque[]){
  * Entrée : le SF à afficher
  * Sortie : aucune
  */
-void AfficherSF (tSF sf){
-  // A COMPLETER
+void AfficherSF(tSF sf){
+  printf("===== SUPER BLOC =====\n");
+  AfficherSuperBloc(sf->superBloc);
+
+  printf("\n===== LISTE INODES =====\n");
+
+  struct sListeInodesElement *tmp = sf->listeInodes.premier;
+
+  while (tmp != NULL) {
+    AfficherInode(tmp->inode);
+    printf("\n");
+    tmp = tmp->suivant;
+  }
 }
 
 /* V2
@@ -113,6 +166,47 @@ void AfficherSF (tSF sf){
  */
 long Ecrire1BlocFichierSF(tSF sf, char nomFichier[], natureFichier type) {
   // A COMPLETER
+  if (sf==NULL){
+    return -1;
+  }
+  FILE *f;
+  f=fopen(nomFichier,"rb");
+
+  if (f==NULL) {
+    return -1;
+  }
+
+  unsigned char b[TAILLE_BLOC];
+  
+  long nb=fread(b,1,TAILLE_BLOC,f);
+  fclose(f);
+
+  tInode inode = CreerInode(sf->listeInodes.nbInodes + 1,type);
+  if (inode==NULL){
+    return -1;
+  }
+  //mremplire inode avec donnes du fichier
+  long ecrit=LireDonneesInode1bloc(inode,b,nb);
+  if (ecrit<0){
+    return -1;
+  }
+
+  struct sListeInodesElement *elt =malloc(sizeof(struct sListeInodesElement));
+  elt->inode=inode;
+  elt->suivant=NULL;
+
+  if(sf->listeInodes.premier==NULL){
+    sf->listeInodes.premier=elt;
+    sf->listeInodes.dernier=elt;
+  }else{
+    sf->listeInodes.dernier->suivant=elt; //??
+    sf->listeInodes.dernier=elt;
+  }
+  sf->listeInodes.nbInodes++;
+  sf->superBloc->dateDerModif=time(NULL);
+  
+  return ecrit;
+
 }
 
 /* V3 & V4
@@ -132,7 +226,20 @@ long EcrireFichierSF(tSF sf, char nomFichier[], natureFichier type) {
  * Sortie : 0 en cas de succèe, -1 en cas d'erreur
  */
 int SauvegarderSF(tSF sf, char nomFichier[]) {
-  // A COMPLETER
+    FILE *f = fopen(nomFichier, "wb");
+    if (!f) return -1;
+
+    fwrite(sf->superBloc, sizeof(struct sSuperBloc), 1, f);
+    fwrite(&(sf->listeInodes.nbInodes), sizeof(int), 1, f);
+
+    struct sListeInodesElement *tmp = sf->listeInodes.premier;
+    while (tmp) {
+        SauvegarderInode(tmp->inode, f);
+        tmp = tmp->suivant;
+    }
+
+    fclose(f);
+    return 0;
 }
 
 /* V3
@@ -141,7 +248,42 @@ int SauvegarderSF(tSF sf, char nomFichier[]) {
  * Sortie : 0 en cas de succèe, -1 en cas d'erreur
  */
 int ChargerSF(tSF *pSF, char nomFichier[]) {
-  // A COMPLETER
+    FILE *f = fopen(nomFichier, "rb");
+    if (!f) return -1;
+
+    tSF sf = malloc(sizeof(struct sSF));
+    if (!sf) return -1;
+
+    sf->superBloc = malloc(sizeof(struct sSuperBloc));
+    fread(sf->superBloc, sizeof(struct sSuperBloc), 1, f);
+
+    sf->listeInodes.nbInodes = 0;
+    sf->listeInodes.premier = NULL;
+    sf->listeInodes.dernier = NULL;
+
+    int n;
+    fread(&n, sizeof(int), 1, f);
+
+    for (int i = 0; i < n; i++) {
+        tInode inode = NULL;
+        ChargerInode(&inode, f);
+
+        struct sListeInodesElement *elt = malloc(sizeof(struct sListeInodesElement));
+        elt->inode = inode;
+        elt->suivant = NULL;
+
+        if (!sf->listeInodes.premier)
+            sf->listeInodes.premier = elt;
+        else
+            sf->listeInodes.dernier->suivant = elt;
+
+        sf->listeInodes.dernier = elt;
+        sf->listeInodes.nbInodes++;
+    }
+
+    fclose(f);
+    *pSF = sf;
+    return 0;
 }
 
 /* V4

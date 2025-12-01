@@ -19,8 +19,33 @@ struct sRepertoire
  */
 tRepertoire CreerRepertoire(void)
 {
-  // A COMPLETER
+  tRepertoire rep=malloc(sizeof(struct sRepertoire));
+  if(rep==NULL){
+    fprintf(stderr,"CreerRepertoire : probleme creation\n");
+    return NULL;
+  }
+
+  rep->table=malloc(sizeof(struct sEntreesRepertoire));
+  if(rep->table==NULL){
+    fprintf(stderr,"CreerRepertoire : probleme creation\n");
+    return NULL;
+  }
+  rep->table[0]->nomEntree[0]= '\0';
+  rep->table[0]->numeroInode= 0;
+  
+  
+  return rep;
 }
+
+
+static int CompterEntrees(tRepertoire rep)
+{
+    int n = 0;
+    while (rep->table[n]->nomEntree[0] != '\0')
+        n++;
+    return n;
+}
+
 
 /* V4
  * Détruit un répertoire et libère la mémoire associée.
@@ -29,7 +54,11 @@ tRepertoire CreerRepertoire(void)
  */
 void DetruireRepertoire(tRepertoire *pRep)
 {
-  // A COMPLETER
+  if (*pRep!=NULL || pRep!=NULL){
+    free((*pRep)->table);
+    free(*pRep);
+    *pRep=NULL;
+  }
 }
 
 /* V4
@@ -42,7 +71,9 @@ void DetruireRepertoire(tRepertoire *pRep)
  */
 int EcrireEntreeRepertoire(tRepertoire rep, char nomEntree[], unsigned int numeroInode)
 {
-  // A COMPLETER
+  tEntreesRepertoire entreeRep;
+  rep->table=entreeRep;
+
 }
 
 /* V4

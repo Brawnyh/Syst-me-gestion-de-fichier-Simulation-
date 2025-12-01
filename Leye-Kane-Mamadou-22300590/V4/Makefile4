@@ -1,0 +1,34 @@
+CC=gcc
+CFLAGS=-Wall -Wpedantic -std=c11 -Wextra -g -Wextra
+RM=rm -f
+DEPS= bloc.h inode.h sf.h repertoire.h
+OBJ= bloc.o inode.o gerer_sf_v4.o sf.o repertoire.o
+EXE=gerer_sf_v4
+
+
+# Regenerer l'executable d'apres les dependances *.o 
+$(EXE):  $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(EXE)
+
+# Regenerer les .o quand les .h ou .c changent
+gerer_sf_v4.o : gerer_sf_v4.c bloc.h inode.h
+	$(CC) $(CFLAGS) -c gerer_sf_v4.c 
+
+bloc.o : bloc.c bloc.h
+	$(CC) $(CFLAGS) -c bloc.c 
+
+inode.o : inode.c inode.h bloc.h
+	$(CC) $(CFLAGS) -c inode.c 
+
+sf.o : sf.c sf.h bloc.h
+	$(CC) $(CFLAGS) -c sf.c
+
+repertoire.o: repertoire.c repertoire.h inode.h
+	$(CC) $(CFLAGS) -c repertoire.c
+
+#Etre certain que la cible n'est pas un fichier de nom clean
+.PHONY: clean 
+
+# Effacer objets et executables (make -f Makefile1 clean)
+clean:
+	$(RM) $(OBJ) $(EXE)
