@@ -144,6 +144,7 @@ tSF CreerSF (char nomDisque[]){
     elem->suivant = NULL;
 
     sf->listeInodes.premier = elem;
+    sf->listeInodes.dernier=elem;
     sf->listeInodes.nbInodes = 1;
 
     tRepertoire rep = CreerRepertoire();
@@ -272,12 +273,18 @@ long EcrireFichierSF(tSF sf, char nomFichier[], natureFichier type) {
 
   struct sListeInodesElement *elem = malloc(sizeof(struct sListeInodesElement));
   elem->inode = inode;
-  elem->suivant = sf->listeInodes.premier;
-  sf->listeInodes.premier = elem;
-  sf->listeInodes.nbInodes++;
+  elem->suivant = NULL;
+  if(sf->listeInodes.premier==NULL){
+    sf->listeInodes.premier = elem;
+    sf->listeInodes.dernier=elem;
+  }else{
+    sf->listeInodes.dernier->suivant = elem;
+    sf->listeInodes.dernier=elem;
+  }
+
 
   //mis a jour rep racine
-  tInode inode0 = sf->listeInodes.premier->suivant->inode; // premier est inode créé, suivant = inode0
+  tInode inode0 = sf->listeInodes.premier->inode; // premier est inode créé, suivant = inode0
   tRepertoire rep = CreerRepertoire();
   LireRepertoireDepuisInode(&rep, inode0);
   EcrireEntreeRepertoire(rep, nomFichier, num);
