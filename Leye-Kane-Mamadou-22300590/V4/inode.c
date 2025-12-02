@@ -7,7 +7,7 @@
 #include "inode.h"
 #include "bloc.h"
 #include <stdlib.h>
-#include "repertoire.h"
+
 #define NB_BLOCS_DIRECTS 10
 
 struct sInode
@@ -199,8 +199,9 @@ long LireDonneesInode1bloc(tInode inode, unsigned char *contenu, long taille) {
   if (nb>=0){
     inode->taille=nb;
     inode->dateDerModif=time(NULL);
+    inode->dateDerModifInode=time(NULL);
   }
-
+  inode->dateDerAcces=time(NULL);
   return nb;
 }
 

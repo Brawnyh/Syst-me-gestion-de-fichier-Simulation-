@@ -127,7 +127,7 @@ tSF CreerSF(char nomDisque[]) {
   sf->listeInodes.dernier = NULL;
   sf->listeInodes.nbInodes = 0;
 
-    return sf;
+  return sf;
 }
 
 /* V2
@@ -218,7 +218,7 @@ long Ecrire1BlocFichierSF(tSF sf, char nomFichier[], natureFichier type) {
     sf->listeInodes.premier=elt;
     sf->listeInodes.dernier=elt;
   }else{
-    sf->listeInodes.dernier->suivant=elt; //??
+    sf->listeInodes.dernier->suivant=elt;
     sf->listeInodes.dernier=elt;
   }
   sf->listeInodes.nbInodes++;

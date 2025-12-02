@@ -228,9 +228,14 @@ long Ecrire1BlocFichierSF(tSF sf, char nomFichier[], natureFichier type) {
     return -1;
   }
   //mremplire inode avec donnes du fichier
-  long ecrit=LireDonneesInode1bloc(inode,b,nb);
+  //long ecrit=LireDonneesInode1bloc(inode,b,nb);
+  long ecrit=EcrireDonneesInode1bloc(inode,b,nb);
   if (ecrit<0){
     return -1;
+  }
+  if (ecrit>0){
+    DateDerModif(inode);
+    DateDerModifFichier(inode);
   }
 
   struct sListeInodesElement *elt =malloc(sizeof(struct sListeInodesElement));
@@ -241,7 +246,7 @@ long Ecrire1BlocFichierSF(tSF sf, char nomFichier[], natureFichier type) {
     sf->listeInodes.premier=elt;
     sf->listeInodes.dernier=elt;
   }else{
-    sf->listeInodes.dernier->suivant=elt; //??
+    sf->listeInodes.dernier->suivant=elt;
     sf->listeInodes.dernier=elt;
   }
   sf->listeInodes.nbInodes++;
@@ -270,7 +275,9 @@ long EcrireFichierSF(tSF sf, char nomFichier[], natureFichier type) {
   tInode inode = CreerInode(num, type);
   if (inode == NULL) return -1;
   EcrireDonneesInode(inode, buffer, lus, 0);
-
+  DateDerModif(inode);
+  DateDerModifFichier(inode);
+  
   struct sListeInodesElement *elem = malloc(sizeof(struct sListeInodesElement));
   elem->inode = inode;
   elem->suivant = NULL;
@@ -387,7 +394,7 @@ int Ls(tSF sf, bool detail)  {
     return 0;
   }
 
-    // affichage détaillé
+  // affichage détaillé
   for (int i = 0; i < n; i++) {
       unsigned int num = tab[i].numeroInode;
       struct sListeInodesElement *p = sf->listeInodes.premier;
@@ -400,7 +407,8 @@ int Ls(tSF sf, bool detail)  {
           (Type(inode)==ORDINAIRE? "ORDINAIRE" :
             Type(inode)==REPERTOIRE? "REPERTOIRE":"AUTRE");
       time_t t2 = DateDerModif(inode);
-      printf("%-3u %-12s %6ld %s %s\n",num,typeName,Taille(inode),ctime(&t2),tab[i].nomEntree);
+      char *dates =ctime(&t2);
+      printf("%-3u %-12s %6ld %s %s\n",num,typeName,Taille(inode),dates,tab[i].nomEntree);
     }
 
     DetruireRepertoire(&rep);
