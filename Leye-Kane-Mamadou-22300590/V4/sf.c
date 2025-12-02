@@ -234,8 +234,7 @@ long Ecrire1BlocFichierSF(tSF sf, char nomFichier[], natureFichier type) {
     return -1;
   }
   if (ecrit>0){
-    DateDerModif(inode);
-    DateDerModifFichier(inode);
+    return -1;
   }
 
   struct sListeInodesElement *elt =malloc(sizeof(struct sListeInodesElement));
@@ -274,9 +273,11 @@ long EcrireFichierSF(tSF sf, char nomFichier[], natureFichier type) {
   int num = sf->listeInodes.nbInodes;
   tInode inode = CreerInode(num, type);
   if (inode == NULL) return -1;
-  EcrireDonneesInode(inode, buffer, lus, 0);
-  DateDerModif(inode);
-  DateDerModifFichier(inode);
+  long e=EcrireDonneesInode(inode, buffer, lus, 0);
+  if(e<0){
+    DetruireInode(&inode);
+    return -1;
+  }
   
   struct sListeInodesElement *elem = malloc(sizeof(struct sListeInodesElement));
   elem->inode = inode;
@@ -288,7 +289,7 @@ long EcrireFichierSF(tSF sf, char nomFichier[], natureFichier type) {
     sf->listeInodes.dernier->suivant = elem;
     sf->listeInodes.dernier=elem;
   }
-
+  sf->listeInodes.nbInodes++;
 
   //mis a jour rep racine
   tInode inode0 = sf->listeInodes.premier->inode; // premier est inode créé, suivant = inode0
@@ -297,7 +298,8 @@ long EcrireFichierSF(tSF sf, char nomFichier[], natureFichier type) {
   EcrireEntreeRepertoire(rep, nomFichier, num);
   EcrireRepertoireDansInode(rep, inode0);
   DetruireRepertoire(&rep);
-  return lus;
+  sf->superBloc->dateDerModif=time(NULL);
+  return e;
 }
 
 /* V3

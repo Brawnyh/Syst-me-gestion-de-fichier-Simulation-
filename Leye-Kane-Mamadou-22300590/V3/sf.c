@@ -250,7 +250,8 @@ long EcrireFichierSF(tSF sf, char nomFichier[], natureFichier type) {
 
     if (lus <= 0) return -1;
 
-    tInode inode = CreerInode(sf->listeInodes.nbInodes + 1, type);
+    unsigned int num=sf->listeInodes.nbInodes;
+    tInode inode = CreerInode(num, type);
     if (!inode) return -1;
 
     long pos = 0;
@@ -266,15 +267,24 @@ long EcrireFichierSF(tSF sf, char nomFichier[], natureFichier type) {
         pos += e;
     }
     struct sListeInodesElement *elt = malloc(sizeof(struct sListeInodesElement));
+    if(!elt){
+      DetruireInode(&inode);
+      return -1;
+    }
     elt->inode = inode;
     elt->suivant = NULL;
 
-    if (sf->listeInodes.premier == NULL)
-        sf->listeInodes.premier = elt;
-    else
-        sf->listeInodes.dernier->suivant = elt;
+    if (sf->listeInodes.premier == NULL){
+      sf->listeInodes.premier = elt;
+      sf->listeInodes.dernier=elt;
+    }
 
-    sf->listeInodes.dernier = elt;
+    else{
+      sf->listeInodes.dernier->suivant = elt;
+      sf->listeInodes.dernier=elt;
+    }
+        
+
     sf->listeInodes.nbInodes++;
     sf->superBloc->dateDerModif = time(NULL);
 
