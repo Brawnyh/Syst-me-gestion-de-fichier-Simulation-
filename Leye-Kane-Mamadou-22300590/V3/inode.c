@@ -182,18 +182,14 @@ void AfficherInode(tInode inode) {
  */
 long LireDonneesInode1bloc(tInode inode, unsigned char *contenu, long taille) {
   // A COMPLETER
-  if (inode==NULL) return -1;
-  if((inode->blocDonnees[0]==NULL)){
-    inode->blocDonnees[0]=CreerBloc();
-    if (inode->blocDonnees[0]==NULL){
-      return -1;
-    }
-  }
+  if (inode == NULL) return -1;
+  if (inode->blocDonnees[0] == NULL) return -1;  // aucun bloc
 
-  long nb=EcrireContenuBloc(inode->blocDonnees[0],contenu,taille);
+
+
+  long nb=LireContenuBloc(inode->blocDonnees[0],contenu,taille);
   if (nb>=0){
-    inode->taille=nb;
-    inode->dateDerModif=time(NULL);
+    inode->dateDerAcces=time(NULL);
   }
 
   return nb;
@@ -206,15 +202,22 @@ long LireDonneesInode1bloc(tInode inode, unsigned char *contenu, long taille) {
  * Retour : le nombre d'octets effectivement lus dans l'inode ou -1 en cas d'erreur
  */
 long EcrireDonneesInode1bloc(tInode inode, unsigned char *contenu, long taille) {
-  // A 
-  
-  if (inode == NULL) return -1;
-  if (inode->blocDonnees[0] == NULL) return -1;  // aucun bloc
+  if (inode==NULL) return -1;
+  if((inode->blocDonnees[0]==NULL)){
+    inode->blocDonnees[0]=CreerBloc();
+    if (inode->blocDonnees[0]==NULL){
+        return -1;
+    }
+  }
 
-  long nb = LireContenuBloc(inode->blocDonnees[0], contenu, taille);
+
+
+  long nb = EcrireContenuBloc(inode->blocDonnees[0], contenu, taille);
 
   if (nb >= 0){
-    inode->dateDerAcces = time(NULL);
+    inode->taille=nb;
+    inode->dateDerModif = time(NULL);
+    inode->dateDerModifInode=time(NULL);
   } 
   return nb;
 }
@@ -303,25 +306,21 @@ long EcrireDonneesInode(tInode inode, unsigned char *contenu, long taille, long 
 int SauvegarderInode(tInode inode, FILE *fichier) {
     if (inode == NULL || fichier == NULL) return -1;
 
-    if (fwrite(&(inode->numero), sizeof(unsigned int), 1, fichier) != 1) return -1;
-    if (fwrite(&(inode->type), sizeof(natureFichier), 1, fichier) != 1) return -1;
-    if (fwrite(&(inode->taille), sizeof(long), 1, fichier) != 1) return -1;
-    if (fwrite(&(inode->dateDerAcces), sizeof(time_t), 1, fichier) != 1) return -1;
-    if (fwrite(&(inode->dateDerModif), sizeof(time_t), 1, fichier) != 1) return -1;
-    if (fwrite(&(inode->dateDerModifInode), sizeof(time_t), 1, fichier) != 1) return -1;
+    fwrite(&(inode->numero), sizeof(unsigned int), 1, fichier);
+    fwrite(&(inode->type), sizeof(natureFichier), 1, fichier);
+    fwrite(&(inode->taille), sizeof(long), 1, fichier);
+    fwrite(&(inode->dateDerAcces), sizeof(time_t), 1, fichier);
+    fwrite(&(inode->dateDerModif), sizeof(time_t), 1, fichier);
+    fwrite(&(inode->dateDerModifInode), sizeof(time_t), 1, fichier);
 
     for (int i = 0; i < NB_BLOCS_DIRECTS; i++) {
-        char present;
-        if ((inode->blocDonnees[i]!=NULL)){
-            present=1;
-        }else{
-          present=0;
+        char present=(inode->blocDonnees[i]!=NULL);
+        fwrite(&present,sizeof(char),1,fichier);
+        if(present){
+          fwrite(inode->blocDonnees[i],sizeof(unsigned char),TAILLE_BLOC,fichier);
         }
-        if (fwrite(&(inode->blocDonnees[i]), sizeof(tBloc), 1, fichier) != 1) return -1;
-        if (present){
-          if (fwrite(inode->blocDonnees[i],sizeof(unsigned char),TAILLE_BLOC,fichier)!=TAILLE_BLOC) return -1;
 
-        }
+        
     }
 
     return 0;

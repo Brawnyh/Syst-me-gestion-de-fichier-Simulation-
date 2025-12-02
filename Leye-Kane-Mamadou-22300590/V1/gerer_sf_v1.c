@@ -46,9 +46,9 @@ int main(void){
     printf("inode cree\n");
 
     // remplir l'inode avec les données du bloc
-    LireDonneesInode1bloc(inode, texte, taille);
+    EcrireDonneesInode1bloc(inode, texte, taille);
     printf("inode remplit\n");
-
+    LireDonneesInode1bloc(inode,texte,taille);
     AfficherInode(inode);
     //donnes a afficher
 

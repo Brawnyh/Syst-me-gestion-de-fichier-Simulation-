@@ -168,20 +168,16 @@ void AfficherInode(tInode inode) {
  */
 long LireDonneesInode1bloc(tInode inode, unsigned char *contenu, long taille) {
   // A COMPLETER
-  if (inode==NULL) return -1;
-  if((inode->blocDonnees[0]==NULL)){
-    inode->blocDonnees[0]=CreerBloc();
-    if (inode->blocDonnees[0]==NULL){
-        return -1;
-    }
+  if (inode == NULL) return -1;
+  if (inode->blocDonnees[0] == NULL) return -1;  // aucun bloc
+
+
+
+  long nb=LireContenuBloc(inode->blocDonnees[0],contenu,taille);
+  if (nb>=0){
+    inode->dateDerAcces=time(NULL);
   }
 
-  long nb=EcrireContenuBloc(inode->blocDonnees[0],contenu,taille); //fonction bloc reutiliser au lieu de réecrire
-  if (nb>=0){
-    inode->taille=nb;
-    inode->dateDerModif=time(NULL);
-  }
- 
   return nb;
 }
 
@@ -192,15 +188,22 @@ long LireDonneesInode1bloc(tInode inode, unsigned char *contenu, long taille) {
  * Retour : le nombre d'octets effectivement lus dans l'inode ou -1 en cas d'erreur
  */
 long EcrireDonneesInode1bloc(tInode inode, unsigned char *contenu, long taille) {
-  // A 
-  
-  if (inode == NULL) return -1;
-  if (inode->blocDonnees[0] == NULL) return -1;  // aucun bloc
+  if (inode==NULL) return -1;
+  if((inode->blocDonnees[0]==NULL)){
+    inode->blocDonnees[0]=CreerBloc();
+    if (inode->blocDonnees[0]==NULL){
+        return -1;
+    }
+  }
 
-  long nb = LireContenuBloc(inode->blocDonnees[0], contenu, taille);
+
+
+  long nb = EcrireContenuBloc(inode->blocDonnees[0], contenu, taille);
 
   if (nb >= 0){
-    inode->dateDerAcces = time(NULL);
+    inode->taille=nb;
+    inode->dateDerModif = time(NULL);
+    inode->dateDerModifInode=time(NULL);
   } 
   return nb;
 }

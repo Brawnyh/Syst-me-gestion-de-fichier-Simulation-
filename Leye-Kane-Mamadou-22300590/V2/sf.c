@@ -205,7 +205,7 @@ long Ecrire1BlocFichierSF(tSF sf, char nomFichier[], natureFichier type) {
     return -1;
   }
   //mremplire inode avec donnes du fichier
-  long ecrit=LireDonneesInode1bloc(inode,b,nb);
+  long ecrit=EcrireDonneesInode1bloc(inode,b,nb);
   if (ecrit<0){
     return -1;
   }
