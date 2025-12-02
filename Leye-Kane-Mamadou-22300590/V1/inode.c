@@ -44,7 +44,7 @@ tInode CreerInode(int numInode, natureFichier type) {
   for (int i = 0; i < NB_BLOCS_DIRECTS; i++) {
     Inode->blocDonnees[i] = NULL;
   }
-  //on initialise le temps
+  //on initialise les temps
   Inode->dateDerAcces=0; 
   Inode->dateDerModif=0;
   Inode->dateDerModifInode=0;
@@ -195,11 +195,7 @@ long EcrireDonneesInode1bloc(tInode inode, unsigned char *contenu, long taille) 
         return -1;
     }
   }
-
-
-
   long nb = EcrireContenuBloc(inode->blocDonnees[0], contenu, taille);
-
   if (nb >= 0){
     inode->taille=nb;
     inode->dateDerModif = time(NULL);

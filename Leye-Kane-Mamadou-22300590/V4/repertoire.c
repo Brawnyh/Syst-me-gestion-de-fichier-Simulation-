@@ -64,7 +64,7 @@ static int nomsEgaux(char a[], char b[])
     }
     return 1;
 }
-//fin fonctions auxiliaire
+
 
 static int CompterEntrees(tRepertoire rep)
 {

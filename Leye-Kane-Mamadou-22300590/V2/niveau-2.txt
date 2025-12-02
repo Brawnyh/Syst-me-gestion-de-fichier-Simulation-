@@ -1,1 +1,2 @@
 test du main
+j'ai utilise fprintf pour l'affichage de erreur

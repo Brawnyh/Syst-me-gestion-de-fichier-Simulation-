@@ -299,10 +299,9 @@ long EcrireFichierSF(tSF sf, char nomFichier[], natureFichier type) {
 int SauvegarderSF(tSF sf, char nomFichier[]) {
     FILE *f = fopen(nomFichier, "wb");
     if (!f) return -1;
-
+    
     fwrite(sf->superBloc, sizeof(struct sSuperBloc), 1, f);
     fwrite(&(sf->listeInodes.nbInodes), sizeof(int), 1, f);
-
     struct sListeInodesElement *tmp = sf->listeInodes.premier;
     while (tmp) {
         SauvegarderInode(tmp->inode, f);
@@ -331,23 +330,22 @@ int ChargerSF(tSF *pSF, char nomFichier[]) {
     sf->listeInodes.nbInodes = 0;
     sf->listeInodes.premier = NULL;
     sf->listeInodes.dernier = NULL;
-
+    //fin initialization
     int n;
     fread(&n, sizeof(int), 1, f);
 
     for (int i = 0; i < n; i++) {
         tInode inode = NULL;
         ChargerInode(&inode, f);
-
         struct sListeInodesElement *elt = malloc(sizeof(struct sListeInodesElement));
         elt->inode = inode;
         elt->suivant = NULL;
-
-        if (!sf->listeInodes.premier)
-            sf->listeInodes.premier = elt;
-        else
-            sf->listeInodes.dernier->suivant = elt;
-
+        if (!sf->listeInodes.premier){
+          sf->listeInodes.premier = elt;
+        }
+        else{
+          sf->listeInodes.dernier->suivant = elt;
+        }
         sf->listeInodes.dernier = elt;
         sf->listeInodes.nbInodes++;
     }

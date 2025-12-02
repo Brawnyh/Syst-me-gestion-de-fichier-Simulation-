@@ -1,2 +1,3 @@
-buenas amigos como estias,me llamo juan pablo
-y tengo 2 hijos
+EcrireDonnesInode->factorisation du code pr augmenter la lisibilité
+ChargerInode a factoriser si possible(il y a trop de condition mm si elles servent a eviter des leaks)
+Usage IA dans EcrireFichierSF->dans le while(lignes:257-268)

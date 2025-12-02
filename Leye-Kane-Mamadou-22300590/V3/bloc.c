@@ -99,18 +99,16 @@ int SauvegarderBloc(tBloc bloc, long taille, FILE *fichier){
   if (bloc==NULL || fichier == NULL){
     return -1;
   }
-
   if (taille<=0){
       return -1;
   }
-  
+
   //verification depassement
   if (taille>TAILLE_BLOC){
     nbaEcrire=TAILLE_BLOC;
   }else{
     nbaEcrire=taille;
   }
-
   //ecriture bin
   ecris=fwrite((const void *)bloc,1,(size_t)nbaEcrire,fichier);
   if ((long)ecris!=nbaEcrire){

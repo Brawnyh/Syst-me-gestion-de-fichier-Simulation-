@@ -126,7 +126,7 @@ tSF CreerSF(char nomDisque[]) {
   sf->listeInodes.premier = NULL;
   sf->listeInodes.dernier = NULL;
   sf->listeInodes.nbInodes = 0;
-
+  
   return sf;
 }
 
@@ -138,20 +138,16 @@ tSF CreerSF(char nomDisque[]) {
 void DetruireSF(tSF *pSF) {
   
   struct sListeInodesElement *tmp;
-
   if (pSF == NULL || *pSF == NULL)
     return;
   tmp = (*pSF)->listeInodes.premier;
   while (tmp != NULL) {
-
     struct sListeInodesElement *suiv = tmp->suivant;
     DetruireInode(&(tmp->inode));
     free(tmp);
     tmp = suiv;
   }
-
   DetruireSuperBloc(&((*pSF)->superBloc));
-
   free(*pSF);
   *pSF = NULL;
 }
@@ -170,7 +166,6 @@ void AfficherSF(tSF sf){
   printf("\n===== LISTE INODES =====\n");
 
   struct sListeInodesElement *tmp = sf->listeInodes.premier;
-
   while (tmp != NULL) {
     AfficherInode(tmp->inode);
     printf("\n");
@@ -190,13 +185,10 @@ long Ecrire1BlocFichierSF(tSF sf, char nomFichier[], natureFichier type) {
   }
   FILE *f;
   f=fopen(nomFichier,"rb");
-
   if (f==NULL) {
     return -1;
   }
-
   unsigned char b[TAILLE_BLOC];
-  
   long nb=fread(b,1,TAILLE_BLOC,f);
   fclose(f);
 
@@ -209,11 +201,9 @@ long Ecrire1BlocFichierSF(tSF sf, char nomFichier[], natureFichier type) {
   if (ecrit<0){
     return -1;
   }
-
   struct sListeInodesElement *elt =malloc(sizeof(struct sListeInodesElement));
   elt->inode=inode;
   elt->suivant=NULL;
-
   if(sf->listeInodes.premier==NULL){
     sf->listeInodes.premier=elt;
     sf->listeInodes.dernier=elt;
