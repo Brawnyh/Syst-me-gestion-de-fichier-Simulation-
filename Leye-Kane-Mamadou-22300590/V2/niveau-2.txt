@@ -1,2 +1,3 @@
 test du main
-j'ai utilise fprintf pour l'affichage de erreur
+-Usage de fprintf pour l'affichage de erreur
+-ne pas oublier de mettre a jr le temps apres chaque modification

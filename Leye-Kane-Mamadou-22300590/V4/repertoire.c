@@ -131,15 +131,12 @@ int EcrireEntreeRepertoire(tRepertoire rep, char nomEntree[], unsigned int numer
 int LireRepertoireDepuisInode(tRepertoire *pRep, tInode inode)
 {
     if (pRep == NULL || inode == NULL) return -1;
-
     unsigned char buffer[640];
-
     long lus = LireDonneesInode(inode, buffer, 640, 0);
     if (lus <= 0) return -1;
 
     int pos = 0;
     int entree = 0;
-
     while (pos < lus && entree < MAX_ENTREES) {
         // lecture nomF
         int j = 0;
@@ -147,14 +144,11 @@ int LireRepertoireDepuisInode(tRepertoire *pRep, tInode inode)
             (*pRep)->table[entree]->nomEntree[j++] = buffer[pos++];
         }
         (*pRep)->table[entree]->nomEntree[j] = '\0';
-
         pos++;
-        
-
         // lecture numInode
         unsigned int num = 0;
         while (pos < lus && buffer[pos] >= '0' && buffer[pos] <= '9') {
-            num = num * 10 + (buffer[pos] - '0');
+            num = num * 10+(buffer[pos] - '0');
             pos++;
         }
         (*pRep)->table[entree]->numeroInode = num;
@@ -174,12 +168,9 @@ int LireRepertoireDepuisInode(tRepertoire *pRep, tInode inode)
 int EcrireRepertoireDansInode(tRepertoire rep, tInode inode)
 {
     if (rep == NULL || inode == NULL) return -1;
-
     unsigned char buffer[640];  //taille max sf
     int pos = 0;
-
     int n = NbEntreesRepertoire(rep);
-
     for (int i = 0; i < n; i++) {
         // copier nom
         int j = 0;
@@ -189,15 +180,12 @@ int EcrireRepertoireDansInode(tRepertoire rep, tInode inode)
         }
 
         buffer[pos++] = ' ';
-
         // copie num inode
         unsigned int num = rep->table[i]->numeroInode;
         char tmp[12];
         int k = 0;
-
         // convertir num a text
         sprintf(tmp, "%u", num);
-
         while (tmp[k] != '\0' && pos < 639) {
             buffer[pos++] = tmp[k++];
         }
@@ -222,7 +210,6 @@ int EntreesContenuesDansRepertoire(tRepertoire rep, struct sEntreesRepertoire ta
   if (rep == NULL) return -1;
 
   int n = NbEntreesRepertoire(rep);
-
   for (int i = 0; i < n; i++) {
       //copier nom
       int j = 0;

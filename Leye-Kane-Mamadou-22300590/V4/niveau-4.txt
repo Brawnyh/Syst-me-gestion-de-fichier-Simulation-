@@ -1,2 +1,2 @@
 Factorisation du code dans repertoire avec des fonctions auxiliaire pour ameliorer la lisibilite
-deboggage faite avec IA(copilot) fonciton lectureInodeDepuisRepertoire->modification du while(ligne:150-154)
+deboggage fait avec IA(copilot) de la fonction lectureInodeDepuisRepertoire->modification du while(ligne:150-154)

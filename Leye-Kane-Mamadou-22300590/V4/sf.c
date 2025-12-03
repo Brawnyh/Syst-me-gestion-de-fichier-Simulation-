@@ -381,13 +381,10 @@ int Ls(tSF sf, bool detail)  {
   tInode inode0 = sf->listeInodes.premier->inode;
   tRepertoire rep = CreerRepertoire();
   LireRepertoireDepuisInode(&rep, inode0);
-
   int n = NbEntreesRepertoire(rep);
   printf("Nombre de fichiers dans le répertoire racine : %d\n", n);
-
   struct sEntreesRepertoire tab[MAX_ENTREES];
   EntreesContenuesDansRepertoire(rep, tab);
-
   if (!detail) {
     for (int i = 0; i < n; i++){
       printf("%s\n", tab[i].nomEntree);
